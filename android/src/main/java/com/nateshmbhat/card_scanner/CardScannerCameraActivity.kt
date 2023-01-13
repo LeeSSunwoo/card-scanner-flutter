@@ -98,7 +98,7 @@ class CardScannerCameraActivity : AppCompatActivity() {
       try {
         bindAllCameraUseCases()
       } catch (exc: Exception) {
-        debugLog("Use case binding failed : $exc", cardScannerOptions)
+        debugLog("Use case binding failed : $exc", cardScannerOptions!!)
       }
     }, ContextCompat.getMainExecutor(this))
   }
@@ -149,11 +149,11 @@ class CardScannerCameraActivity : AppCompatActivity() {
     textRecognizer?.close()
     textRecognizer = TextRecognition.getClient()
 
-    debugLog("card scanner options : $cardScannerOptions", cardScannerOptions)
+    debugLog("card scanner options : $cardScannerOptions", cardScannerOptions!!)
     val analysisUseCase = ImageAnalysis.Builder().build()
             .also {
-              it.setAnalyzer(cameraExecutor, CardScanner(cardScannerOptions, { cardDetails ->
-                debugLog("Card recognized : $cardDetails", cardScannerOptions)
+              it.setAnalyzer(cameraExecutor, CardScanner(cardScannerOptions!!, { cardDetails ->
+                debugLog("Card recognized : $cardDetails", cardScannerOptions!!)
 
                 val returnIntent: Intent = Intent()
                 returnIntent.putExtra(SCAN_RESULT, cardDetails)
