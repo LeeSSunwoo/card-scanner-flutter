@@ -39,24 +39,24 @@ class CameraViewController: UIViewController {
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-//        DispatchQueue.main.async {
-//            let tapCapturingView = UIControl(
-//                frame: CGRect(
-//                    x: 0.0,
-//                    y: 80.0,
-//                    width: self.view.frame.width,
-//                    height: self.view.frame.height
-//                )
-//            )
-//            
-//            tapCapturingView.addTarget(
-//                self,
-//                action: #selector(self.captureTap(_:)),
-//                for: .touchDown
-//            )
-//            
-//            self.view.addSubview(tapCapturingView)
-//        }
+        DispatchQueue.main.async {
+            let tapCapturingView = UIControl(
+                frame: CGRect(
+                    x: 0.0,
+                    y: 80.0,
+                    width: self.view.frame.width,
+                    height: self.view.frame.height - 230
+                )
+            )
+            
+            tapCapturingView.addTarget(
+                self,
+                action: #selector(self.captureTap(_:)),
+                for: .touchDown
+            )
+            
+            self.view.addSubview(tapCapturingView)
+        }
     }
     
     @objc func captureTap(_ sender: UIEvent) {
@@ -176,7 +176,7 @@ class CameraViewController: UIViewController {
                 frame: CGRect(
                     origin: CGPoint(
                         x: center.x - 160,
-                        y: center.y + 180
+                        y: center.y - 131
                     ),
                     size: CGSize(
                         width: 320,
@@ -188,7 +188,7 @@ class CameraViewController: UIViewController {
             scanYourCardToProceedLabel.textAlignment = NSTextAlignment.center
             scanYourCardToProceedLabel.text = self.prompt
             scanYourCardToProceedLabel.numberOfLines = 0
-            scanYourCardToProceedLabel.font = scanYourCardToProceedLabel.font.withSize(12.0)
+            scanYourCardToProceedLabel.font = scanYourCardToProceedLabel.font.withSize(16.0)
             scanYourCardToProceedLabel.textColor = .white
             self.view.addSubview(scanYourCardToProceedLabel)
         }
@@ -197,8 +197,10 @@ class CameraViewController: UIViewController {
     
     func addNavigationBar() {
         DispatchQueue.main.async {
+            self.view.addSubview(self.cancelButton)
             self.view.addSubview(self.backButton)
             self.view.addSubview(self.flashButton)
+            
         }
     }
     
@@ -206,10 +208,10 @@ class CameraViewController: UIViewController {
         let device = AVCaptureDevice.default(for: AVMediaType.video)!
         let flashBtn = UIButton(
             frame: CGRect(
-                x: self.view.frame.width - (30 + 17 + 30),
+                x: self.view.frame.width - (49+16),
                 y: 55,
-                width: 17 + 30,
-                height: 17 + 10
+                width: 49,
+                height: 49
             )
         )
         
@@ -228,8 +230,8 @@ class CameraViewController: UIViewController {
         
         flashBtn.contentEdgeInsets = UIEdgeInsets(
             top: 0.0,
-            left: 30.0,
-            bottom: 10.0,
+            left: 0.0,
+            bottom: 0.0,
             right: 0.0
         )
         
@@ -239,19 +241,20 @@ class CameraViewController: UIViewController {
     lazy var backButton: UIButton = {
         let backBtn = UIButton(
             frame: CGRect(
-                x: 30,
+                x: 0,
                 y: 55,
-                width: 17 + 30,
-                height: 17 + 10
+                width: 48,
+                height: 48
             )
         )
         
         backBtn.setImage(
             UIImage(
                 named: "backButton"
-            ),
+            )?.withRenderingMode(.alwaysTemplate),
             for: .normal
         )
+        backBtn.tintColor = UIColor.white
         
         backBtn.addTarget(
             self,
@@ -262,11 +265,43 @@ class CameraViewController: UIViewController {
         backBtn.contentEdgeInsets = UIEdgeInsets(
             top: 0.0,
             left: 0.0,
-            bottom: 10.0,
-            right: 30.0
+            bottom: 0.0,
+            right: 0.0
         )
         
         return backBtn
+    }()
+    
+    lazy var cancelButton: UIButton = {
+        let cancelBtn = UIButton(
+            frame: CGRect(
+                x: self.view.center.x - (16 + 26),
+                y: self.view.frame.height - (61+14+32),
+                width: 52+16+16,
+                height: 14+32
+            )
+        )
+        
+        cancelBtn.setTitle("직접입력", for: .normal)
+        cancelBtn.setTitleColor(.white, for: .normal)
+        cancelBtn.titleLabel?.font = .systemFont(ofSize: 14)
+        
+        cancelBtn.addTarget(
+            self,
+            action: #selector(selectorBackButton),
+            for: .touchUpInside
+        )
+        
+//        cancelBtn.backgroundColor = .orange
+        
+//        cancelBtn.contentEdgeInsets = UIEdgeInsets(
+//            top: 16.0,
+//            left: 16.0,
+//            bottom: 16.0,
+//            right: 16.0
+//        )
+        
+        return cancelBtn
     }()
     
     @objc func selectorFlashLightButton() {
@@ -284,6 +319,14 @@ class CameraViewController: UIViewController {
     }
     
     @objc func selectorBackButton() {
+        print("button clicked!")
+        DispatchQueue.main.async {
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
+    
+    @objc func selectorCancelButton() {
+//        print("button clicked!")
         DispatchQueue.main.async {
             self.dismiss(animated: true, completion: nil)
         }
@@ -396,6 +439,7 @@ class CornerClipsView: UIView {
         let halfHeight: CGFloat = 95.0
         let startPoint: CGPoint = CGPoint(x: center.x - halfWidth, y: center.y - halfHeight)
         let endPoint: CGPoint = CGPoint(x: center.x + halfWidth, y: center.y + halfHeight)
+        let corner = 6.75/2
         
         
         let leftTopCorner: CGPoint = startPoint
@@ -406,29 +450,48 @@ class CornerClipsView: UIView {
         guard let ctx  = UIGraphicsGetCurrentContext() else {
             return
         }
+        //카드 이외에 구역 어둡게하는 코드
+        let backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        let card = CGRect(x: leftTopCorner.x, y: leftTopCorner.y, width: 320.0, height: 190.0)
+    
+        backgroundColor.setFill()
+        UIRectFill(rect)
+
+        let path = UIBezierPath(roundedRect: card, cornerRadius: 0)
+
+        let holeRectIntersection = rect.intersection(card)
+
+        UIRectFill(holeRectIntersection)
+
+        UIColor.clear.setFill()
+        UIGraphicsGetCurrentContext()?.setBlendMode(CGBlendMode.copy)
+        path.fill()
+        //여기까지가 어둡게하는 코드
         
-        ctx.setLineWidth(2.0)
-        ctx.setStrokeColor(UIColor.white.cgColor)
+        var blue = UIColor(red: 0.0/255.0, green: 119.0/255.0, blue: 255.0/255.0, alpha: 1.0)
         
-        ctx.move(to: leftTopCorner)
+        ctx.setLineWidth(6.75)
+        ctx.setStrokeColor(blue.cgColor)
+        
+        ctx.move(to: CGPoint(x: leftTopCorner.x - corner, y: leftTopCorner.y))
         ctx.addLine(to: CGPoint(x: leftTopCorner.x + 30, y: leftTopCorner.y))
-        ctx.move(to: leftTopCorner)
-        ctx.addLine(to: CGPoint(x: leftTopCorner.x, y: leftTopCorner.y + 20))
+        ctx.move(to: CGPoint(x: leftTopCorner.x, y: leftTopCorner.y - corner))
+        ctx.addLine(to: CGPoint(x: leftTopCorner.x, y: leftTopCorner.y + 30))
         
-        ctx.move(to: leftBottomCorner)
+        ctx.move(to: CGPoint(x: leftBottomCorner.x - corner, y: leftBottomCorner.y))
         ctx.addLine(to: CGPoint(x: leftBottomCorner.x + 30, y: leftBottomCorner.y))
-        ctx.move(to: leftBottomCorner)
-        ctx.addLine(to: CGPoint(x: leftBottomCorner.x, y: leftBottomCorner.y - 20))
+        ctx.move(to: CGPoint(x: leftBottomCorner.x, y: leftBottomCorner.y + corner))
+        ctx.addLine(to: CGPoint(x: leftBottomCorner.x, y: leftBottomCorner.y - 30))
         
-        ctx.move(to: rightTopCorner)
+        ctx.move(to: CGPoint(x: rightTopCorner.x + corner, y: rightTopCorner.y))
         ctx.addLine(to: CGPoint(x: rightTopCorner.x - 30, y: rightTopCorner.y))
-        ctx.move(to: rightTopCorner)
-        ctx.addLine(to: CGPoint(x: rightTopCorner.x, y: rightTopCorner.y + 20))
+        ctx.move(to: CGPoint(x: rightTopCorner.x, y: rightTopCorner.y - corner))
+        ctx.addLine(to: CGPoint(x: rightTopCorner.x, y: rightTopCorner.y + 30))
         
-        ctx.move(to: rightBottomCorner)
+        ctx.move(to: CGPoint(x: rightBottomCorner.x + corner, y: rightBottomCorner.y))
         ctx.addLine(to: CGPoint(x: rightBottomCorner.x - 30, y: rightBottomCorner.y))
-        ctx.move(to: rightBottomCorner)
-        ctx.addLine(to: CGPoint(x: rightBottomCorner.x, y: rightBottomCorner.y - 20))
+        ctx.move(to: CGPoint(x: rightBottomCorner.x, y: rightBottomCorner.y + corner))
+        ctx.addLine(to: CGPoint(x: rightBottomCorner.x, y: rightBottomCorner.y - 30))
         
         ctx.strokePath()
     }

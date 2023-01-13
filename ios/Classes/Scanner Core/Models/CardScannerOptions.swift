@@ -20,7 +20,7 @@ public class CardScannerOptions {
     var cardScannerTimeOut: Int = 0
     var enableDebugLogs: Bool = false
     var possibleCardHolderNamePositions: [String] = [CardHolderNameScanPositions.belowCardNumber.rawValue]
-    var prompt: String = "Scan the back of your Credit Card to proceed"
+    var prompt: String = "사각형에 카드를 맞춰주세요."
     var cameraOrientation: CameraOrientation = .portrait
     
     init(
