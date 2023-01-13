@@ -7,7 +7,6 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -32,29 +31,31 @@ typealias onCardScanned = (cardDetails: CardDetails?) -> Unit
 typealias onCardScanFailed = () -> Unit
 
 class CardScannerCameraActivity : AppCompatActivity() {
-  private var previewUseCase: Preview? = null;
+  private var previewUseCase: Preview? = null
   private var cameraProvider: ProcessCameraProvider? = null
   private var cameraSelector: CameraSelector? = null
   private var textRecognizer: TextRecognizer? = null
   private var analysisUseCase: ImageAnalysis? = null
-  private lateinit var cardScannerOptions: CardScannerOptions
+  private var cardScannerOptions: CardScannerOptions? = null
   private lateinit var cameraExecutor: ExecutorService
   lateinit var animator: ObjectAnimator
   lateinit var scannerLayout: View
   lateinit var scannerBar: View
   lateinit var backButton: View
+  lateinit var cancelButton: View
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.card_scanner_camera_activity)
     cardScannerOptions = intent.getParcelableExtra<CardScannerOptions>(CARD_SCAN_OPTIONS)
 
-    scannerLayout = findViewById(R.id.scannerLayout);
-    scannerBar = findViewById(R.id.scannerBar);
+    scannerLayout = findViewById(R.id.scannerLayout)
+    scannerBar = findViewById(R.id.scannerBar)
     backButton = findViewById(R.id.backButton)
-    supportActionBar?.hide();
+    cancelButton = findViewById(R.id.cancelButton)
+    supportActionBar?.hide()
 
-    val vto = scannerLayout.viewTreeObserver;
+    val vto = scannerLayout.viewTreeObserver
     backButton.setOnClickListener {
       finish()
     }
@@ -72,6 +73,10 @@ class CardScannerCameraActivity : AppCompatActivity() {
         animator.start()
       }
     })
+
+    cancelButton.setOnClickListener {
+      finish()
+    }
 
     cameraExecutor = Executors.newSingleThreadExecutor()
 
