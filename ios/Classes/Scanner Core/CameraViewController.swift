@@ -39,24 +39,24 @@ class CameraViewController: UIViewController {
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        DispatchQueue.main.async {
-            let tapCapturingView = UIControl(
-                frame: CGRect(
-                    x: 0.0,
-                    y: 80.0,
-                    width: self.view.frame.width,
-                    height: self.view.frame.height
-                )
-            )
-            
-            tapCapturingView.addTarget(
-                self,
-                action: #selector(self.captureTap(_:)),
-                for: .touchDown
-            )
-            
-            self.view.addSubview(tapCapturingView)
-        }
+//        DispatchQueue.main.async {
+//            let tapCapturingView = UIControl(
+//                frame: CGRect(
+//                    x: 0.0,
+//                    y: 80.0,
+//                    width: self.view.frame.width,
+//                    height: self.view.frame.height
+//                )
+//            )
+//            
+//            tapCapturingView.addTarget(
+//                self,
+//                action: #selector(self.captureTap(_:)),
+//                for: .touchDown
+//            )
+//            
+//            self.view.addSubview(tapCapturingView)
+//        }
     }
     
     @objc func captureTap(_ sender: UIEvent) {
