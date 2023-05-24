@@ -69,7 +69,7 @@
                     android:layout_marginBottom="16dp"
                     android:gravity="center"
                     android:lineSpacingExtra="6sp"
-                    android:text="사각형에 카드를 맞춰주세요."
+                    android:text="사각형에 카드를 맞춰주세요.\n스캔이 오래걸리는 경우 직접 입력해주세요."
                     android:textAlignment="center"
                     android:textColor="#ffffff"
                     android:textSize="16sp" />
@@ -128,13 +128,14 @@
                     android:layout_alignParentBottom="true"
                     android:layout_centerInParent="true"
                     android:layout_marginBottom="45dp"
-                    android:background="#00ff0000"
+                    android:background="@drawable/btn_background"
                     android:gravity="center"
                     android:lineSpacingExtra="6sp"
-                    android:padding="16dp"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
                     android:text="직접입력"
                     android:textAlignment="center"
-                    android:textColor="#ffffff"
+                    android:textColor="#0075ff"
                     android:textSize="16sp" />
 
             </RelativeLayout>

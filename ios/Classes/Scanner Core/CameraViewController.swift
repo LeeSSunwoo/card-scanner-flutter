@@ -176,11 +176,11 @@ class CameraViewController: UIViewController {
                 frame: CGRect(
                     origin: CGPoint(
                         x: center.x - 160,
-                        y: center.y - 131
+                        y: center.y - 160
                     ),
                     size: CGSize(
                         width: 320,
-                        height: 20
+                        height: 40
                     )
                 )
             )
@@ -188,7 +188,7 @@ class CameraViewController: UIViewController {
             scanYourCardToProceedLabel.textAlignment = NSTextAlignment.center
             scanYourCardToProceedLabel.text = self.prompt
             scanYourCardToProceedLabel.numberOfLines = 0
-            scanYourCardToProceedLabel.font = scanYourCardToProceedLabel.font.withSize(16.0)
+            scanYourCardToProceedLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFont.Weight.semibold)
             scanYourCardToProceedLabel.textColor = .white
             self.view.addSubview(scanYourCardToProceedLabel)
         }
@@ -278,13 +278,18 @@ class CameraViewController: UIViewController {
                 x: self.view.center.x - (16 + 26),
                 y: self.view.frame.height - (61+14+32),
                 width: 52+16+16,
-                height: 14+32
+                height: 14+16
             )
         )
         
+        cancelBtn.backgroundColor = UIColor(hex: "e5f1ff")
         cancelBtn.setTitle("직접입력", for: .normal)
-        cancelBtn.setTitleColor(.white, for: .normal)
+        cancelBtn.setTitleColor(UIColor(hex: "0075ff"), for: .normal)
         cancelBtn.titleLabel?.font = .systemFont(ofSize: 14)
+        
+        cancelBtn.layer.cornerRadius = 8
+        cancelBtn.layer.masksToBounds = true
+        
         
         cancelBtn.addTarget(
             self,
@@ -292,17 +297,18 @@ class CameraViewController: UIViewController {
             for: .touchUpInside
         )
         
-//        cancelBtn.backgroundColor = .orange
-        
-//        cancelBtn.contentEdgeInsets = UIEdgeInsets(
-//            top: 16.0,
-//            left: 16.0,
-//            bottom: 16.0,
-//            right: 16.0
-//        )
+
         
         return cancelBtn
     }()
+    //        cancelBtn.backgroundColor = .orange
+            
+    //        cancelBtn.contentEdgeInsets = UIEdgeInsets(
+    //            top: 16.0,
+    //            left: 16.0,
+    //            bottom: 16.0,
+    //            right: 16.0
+    //        )
     
     @objc func selectorFlashLightButton() {
         guard let device = AVCaptureDevice.default(for: AVMediaType.video) else {
@@ -370,6 +376,28 @@ class CameraViewController: UIViewController {
             self.captureSession.stopRunning()
             self.dismiss(animated: true, completion: nil)
         }
+    }
+}
+
+extension UIColor {
+    convenience init(hex: String) {
+        var hexFormatted: String = hex.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).uppercased()
+
+        if hexFormatted.hasPrefix("#") {
+            hexFormatted = String(hexFormatted.dropFirst())
+        }
+
+        assert(hexFormatted.count == 6, "Invalid hex code used.")
+
+        var rgbValue: UInt64 = 0
+        Scanner(string: hexFormatted).scanHexInt64(&rgbValue)
+
+        self.init(
+            red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+            blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+            alpha: 1.0
+        )
     }
 }
 
